@@ -1,0 +1,119 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: "etcd0"
+  labels:
+    component: "cilium-etcd0"
+spec:
+  serviceName: "cilium-etcd"
+  template:
+    metadata:
+      name: "etcd"
+      labels:
+        component: "cilium-etcd0"
+    spec:
+      hostNetwork: true
+      containers:
+      - name: "etcd"
+        image: "quay.io/coreos/etcd:v3.3.2"
+        env:
+        - name: ETCD_INITIAL_CLUSTER
+          value: "etcd0=http://10.0.2.15:32380,etcd1=http://10.0.2.15:33380,etcd2=http://10.0.2.15:34380"
+        volumeMounts:
+        - name: local-vol
+          mountPath: /var/etcd
+        command:
+          - "/usr/local/bin/etcd"
+        args:
+          - --name=etcd0
+          - --listen-peer-urls=http://0.0.0.0:32380
+          - --listen-client-urls=http://0.0.0.0:32379
+          - --advertise-client-urls=http://10.0.2.15:32379
+          - --initial-advertise-peer-urls=http://10.0.2.15:32380
+          - --initial-cluster-token=cilium-etcd-cluster-1
+          - --initial-cluster-state=new
+          - --data-dir=/var/etcd/cilium-etcd0/default.etcd
+      volumes:
+        - name: local-vol
+          hostPath:
+            path: /var/etcd
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: "etcd1"
+  labels:
+    component: "cilium-etcd1"
+spec:
+  serviceName: "cilium-etcd"
+  template:
+    metadata:
+      name: "etcd"
+      labels:
+        component: "cilium-etcd1"
+    spec:
+      hostNetwork: true
+      containers:
+      - name: "etcd"
+        image: "quay.io/coreos/etcd:v3.3.2"
+        env:
+        - name: ETCD_INITIAL_CLUSTER
+          value: "etcd0=http://10.0.2.15:32380,etcd1=http://10.0.2.15:33380,etcd2=http://10.0.2.15:34380"
+        volumeMounts:
+        - name: local-vol
+          mountPath: /var/etcd
+        command:
+          - "/usr/local/bin/etcd"
+        args:
+          - --name=etcd1
+          - --listen-peer-urls=http://0.0.0.0:33380
+          - --listen-client-urls=http://0.0.0.0:33379
+          - --advertise-client-urls=http://10.0.2.15:33379
+          - --initial-advertise-peer-urls=http://10.0.2.15:33380
+          - --initial-cluster-token=cilium-etcd-cluster-1
+          - --initial-cluster-state=new
+          - --data-dir=/var/etcd/cilium-etcd1/default.etcd
+      volumes:
+        - name: local-vol
+          hostPath:
+            path: /var/etcd
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: "etcd2"
+  labels:
+    component: "cilium-etcd2"
+spec:
+  serviceName: "cilium-etcd"
+  template:
+    metadata:
+      name: "etcd"
+      labels:
+        component: "cilium-etcd2"
+    spec:
+      hostNetwork: true
+      containers:
+      - name: "etcd"
+        image: "quay.io/coreos/etcd:v3.3.2"
+        env:
+        - name: ETCD_INITIAL_CLUSTER
+          value: "etcd0=http://10.0.2.15:32380,etcd1=http://10.0.2.15:33380,etcd2=http://10.0.2.15:34380"
+        volumeMounts:
+        - name: local-vol
+          mountPath: /var/etcd
+        command:
+          - "/usr/local/bin/etcd"
+        args:
+          - --name=etcd2
+          - --listen-peer-urls=http://0.0.0.0:34380
+          - --listen-client-urls=http://0.0.0.0:34379
+          - --advertise-client-urls=http://10.0.2.15:34379
+          - --initial-advertise-peer-urls=http://10.0.2.15:34380
+          - --initial-cluster-token=cilium-etcd-cluster-1
+          - --initial-cluster-state=new
+          - --data-dir=/var/etcd/cilium-etcd2/default.etcd
+      volumes:
+        - name: local-vol
+          hostPath:
+            path: /var/etcd
